@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Is Maria Batman?</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a pinned corkboard of evidence cards around a redacted suspect photo,
+   a stamped verdict, then a standalone "Batman Detector" console below the board */
+:root{
+  --bg: #e9e0cb;
+  --surface: #f7f0dd;
+  --ink: #241b13;
+  --muted: #6b5d48;
+  --red: #a3291f;
+  --cork: #8a6240;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg: #15110c;
+    --surface: #211a12;
+    --ink: #ece2cd;
+    --muted: #a8967c;
+    --red: #e2574a;
+    --cork: #4a3722;
+    color-scheme: dark;
+  }
+}
+
+*{ box-sizing: border-box; }
+html, body{ margin: 0; }
+body{ background: var(--bg); color: var(--ink); }
+
+main{
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 28px 16px 64px;
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+h1, h2, .display{
+  font-family: "Special Elite", "Courier New", monospace;
+  font-weight: 400;
+  text-wrap: balance;
+}
+
+/* ---------- header ---------- */
+.file-header{
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  padding: 20px 20px 18px;
+  position: relative;
+  box-shadow: 0 2px 0 var(--cork);
+}
+.eyebrow{
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--red);
+  font-weight: 600;
+}
+.file-header h1{
+  font-size: clamp(28px, 6vw, 42px);
+  margin: 6px 0 2px;
+  letter-spacing: 0.02em;
+}
+.file-header .subtitle{
+  font-size: clamp(16px, 3vw, 20px);
+  color: var(--muted);
+  margin: 0;
+}
+.top-secret{
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: 2px solid var(--red);
+  color: var(--red);
+  padding: 4px 8px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  transform: rotate(6deg);
+}
+.meta-row{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.meta-row strong{ color: var(--ink); }
+
+/* ---------- board ---------- */
+.board{ margin-top: 28px; }
+.section-label{
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.suspect-card{
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 16px;
+  align-items: center;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  padding: 16px;
+  margin-bottom: 22px;
+  position: relative;
+}
+.photo{
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: #0d0906;
+  border: 1px solid var(--cork);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.photo span{
+  color: var(--red);
+  font-family: "Special Elite", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  transform: rotate(-16deg);
+  border: 2px solid var(--red);
+  padding: 3px 6px;
+  white-space: nowrap;
+}
+.suspect-info .display{ font-size: 20px; margin: 0 0 4px; }
+.suspect-info p{ margin: 0; color: var(--muted); font-size: 13px; }
+.pin{
+  position: absolute;
+  top: -8px;
+  left: 20px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f6b4ab, #a3291f 60%, #5c1510);
+  box-shadow: 0 2px 2px rgba(0,0,0,0.4);
+}
+
+.evidence-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px 18px;
+  margin-top: 6px;
+}
+.card{
+  background: var(--surface);
+  border: 1px solid var(--cork);
+  padding: 16px 16px 14px;
+  position: relative;
+  box-shadow: 2px 3px 0 rgba(0,0,0,0.12);
+}
+.card::before{
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f6b4ab, #a3291f 60%, #5c1510);
+  box-shadow: 0 2px 2px rgba(0,0,0,0.35);
+}
+.card:nth-child(1){ transform: rotate(-1.6deg); }
+.card:nth-child(2){ transform: rotate(1.2deg); }
+.card:nth-child(3){ transform: rotate(-0.8deg); }
+.card:nth-child(4){ transform: rotate(1.6deg); }
+.card:nth-child(5){ transform: rotate(-1.2deg); }
+.card h3{
+  font-family: "Special Elite", monospace;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--red);
+  margin: 0 0 8px;
+}
+.card p{ margin: 0; font-size: 13.5px; }
+.card--quote{ background: var(--surface); }
+.card--quote blockquote{
+  font-family: "Special Elite", monospace;
+  font-size: 16px;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+.card--quote cite{ font-size: 12px; color: var(--muted); font-style: normal; }
+
+.stamp-wrap{
+  display: flex;
+  justify-content: center;
+  margin: 30px 0 6px;
+}
+.stamp{
+  font-family: "Special Elite", monospace;
+  color: var(--red);
+  border: 3px double var(--red);
+  padding: 10px 22px;
+  font-size: clamp(20px, 4vw, 28px);
+  letter-spacing: 0.08em;
+  transform: rotate(-4deg);
+  text-shadow: 1px 1px 0 rgba(163,41,31,0.25);
+}
+
+.verdict{
+  background: var(--surface);
+  border: 1px solid var(--cork);
+  border-left: 4px solid var(--red);
+  padding: 16px 18px;
+  margin-top: 18px;
+}
+.verdict h2{ font-size: 15px; margin: 0 0 8px; color: var(--red); letter-spacing: 0.05em; }
+.verdict p{ margin: 0; font-size: 13.5px; color: var(--ink); }
+
+/* ---------- detector ---------- */
+.detector{ margin-top: 46px; }
+.device{
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  padding: 18px;
+}
+.device-head{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: "Special Elite", monospace;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+.device-head span{ font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+.device-tag{ font-size: 11px; color: var(--muted); margin: 0 0 14px; }
+
+.screen{
+  background: #0d0906;
+  color: #8fe3a0;
+  border: 1px solid var(--cork);
+  padding: 12px 14px;
+  height: 170px;
+  overflow-y: auto;
+  font-size: 12.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.screen .verdict-line{ color: #8fe3a0; font-weight: 600; }
+.screen .verdict-line.match{ color: #ff6b5e; }
+.screen .dim{ color: #5c7d63; }
+
+form#scan-form{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+form#scan-form label{
+  flex: 1 1 100%;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+#scan-name{
+  flex: 1 1 200px;
+  min-width: 0;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--cork);
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 13px;
+}
+#scan-name:focus-visible, button:focus-visible{
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+button[type="submit"]{
+  background: var(--red);
+  color: var(--surface);
+  border: none;
+  padding: 10px 18px;
+  font-family: "Special Elite", monospace;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+button[type="submit"]:disabled{ opacity: 0.6; cursor: default; }
+
+.device.alarm{ animation: siren 0.5s steps(2, jump-none) infinite; }
+@keyframes siren{
+  0%, 100%{ box-shadow: 0 0 0 0 rgba(163,41,31,0); border-color: var(--ink); }
+  50%{ box-shadow: 0 0 0 4px rgba(163,41,31,0.35); border-color: var(--red); }
+}
+@media (prefers-reduced-motion: reduce){
+  .device.alarm{ animation: none; border-color: var(--red); }
+}
+
+footer{
+  margin-top: 36px;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 560px){
+  .suspect-card{ grid-template-columns: 84px 1fr; }
+  .card{ transform: none !important; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header class="file-header">
+    <div class="top-secret">TOP SECRET</div>
+    <p class="eyebrow">GOTHAM OFFICE OF SECRET IDENTITY VERIFICATION</p>
+    <h1>CASE #0001</h1>
+    <p class="subtitle">IS MARIA BATMAN?</p>
+    <div class="meta-row">
+      <span>STATUS: <strong>CONFIRMED</strong></span>
+      <span>FILED: <strong>10 OCT</strong></span>
+      <span>CLEARANCE: <strong>EYES ONLY</strong></span>
+    </div>
+  </header>
+
+  <section class="board" aria-label="Evidence board">
+    <p class="section-label">THE SUSPECT</p>
+    <div class="suspect-card">
+      <div class="pin" aria-hidden="true"></div>
+      <div class="photo"><span>PHOTO<br>WITHHELD</span></div>
+      <div class="suspect-info">
+        <p class="display">MARIA</p>
+        <p>Status: under investigation. Last seen: nowhere near Batman, which is exactly the problem.</p>
+      </div>
+    </div>
+
+    <p class="section-label">EVIDENCE ON FILE</p>
+    <div class="evidence-grid">
+      <article class="card">
+        <h3>EXHIBIT A — NEVER SEEN TOGETHER</h3>
+        <p>Gotham PD has zero photographs, videos, or eyewitness sightings of Maria and Batman occupying the same room, city, or hemisphere at the same time. Statisticians call this "extremely convenient." We call it Exhibit A.</p>
+      </article>
+      <article class="card">
+        <h3>EXHIBIT B — THE WARDROBE</h3>
+        <p>Suspect's closet audit: predominantly black, slimming, tactical-adjacent. Bruce Wayne's tailor, reached for comment, said nothing — exactly what a tailor under NDA would say.</p>
+      </article>
+      <article class="card">
+        <h3>EXHIBIT C — NOCTURNAL PATTERNS</h3>
+        <p>Subject is reliably awake well past a reasonable bedtime and noticeably more alert after dark. Batman's documented patrol hours: 10 PM–4 AM. Overlap with subject's known waking hours: total.</p>
+      </article>
+      <article class="card">
+        <h3>EXHIBIT D — THE SECRET FACILITY</h3>
+        <p>Subject has unsupervised access to a private facility containing a laser cutter, industrial welders, a powder-coating line, and eight hidden security cameras feeding one secret room. Subject's explanation — "it's just the family metal shop" — is noted and disregarded.</p>
+      </article>
+      <article class="card card--quote">
+        <h3>EXHIBIT E — SUSPECT'S OWN STATEMENT</h3>
+        <blockquote>&ldquo;I'm the only person awesome enough to be Batman.&rdquo;</blockquote>
+        <cite>— Maria, stated freely, under no duress, to multiple witnesses</cite>
+      </article>
+    </div>
+
+    <div class="stamp-wrap"><div class="stamp">CASE CLOSED</div></div>
+
+    <div class="verdict">
+      <h2>OFFICIAL FINDING</h2>
+      <p>On the evidence above, this office finds, beyond any reasonable doubt, that Maria and Batman are either closely coordinated associates or the exact same person wearing two different outfits. Pending further funding, no further investigation is planned. The file is marked: <strong>CONFIRMED</strong>.</p>
+    </div>
+  </section>
+
+  <section class="detector">
+    <p class="section-label">SUPPLEMENTARY EXHIBIT — RUN YOUR OWN SCAN</p>
+    <div class="device" id="device">
+      <div class="device-head">BATMAN DETECTOR&trade; <span>MK. II</span></div>
+      <p class="device-tag">0% accuracy for everyone except one specific person</p>
+      <div class="screen" id="screen" aria-live="polite">&gt; SCAN: Bruce Wayne
+&gt; Cross-referencing cowl database...
+&gt; Checking alibi: "at a charity gala."
+&gt; Alibi status: suspiciously airtight
+<span class="verdict-line">&gt; VERDICT: NOT BATMAN (allegedly)</span>
+<span class="dim">(example scan — on file)</span></div>
+      <form id="scan-form">
+        <label for="scan-name">Enter a name to scan</label>
+        <input id="scan-name" name="scan-name" type="text" placeholder="e.g. Bruce Wayne" autocomplete="off" />
+        <button type="submit" id="scan-btn">Run scan</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>FILED BY: THE INTERNET &middot; DEPT. OF OBVIOUS CONCLUSIONS &middot; 0% ADMISSIBLE IN COURT, 100% TRUE</footer>
+</main>
+
+<script>
+(function(){
+  var form = document.getElementById('scan-form');
+  var input = document.getElementById('scan-name');
+  var screen = document.getElementById('screen');
+  var device = document.getElementById('device');
+  var btn = document.getElementById('scan-btn');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var scanning = false;
+
+  var flavors = [
+    "No cape heat signature detected.",
+    "Jaw not clenched enough.",
+    "Owns zero (0) grappling hooks.",
+    "Bat-ears: not found.",
+    "Brooding levels within normal human range.",
+    "No evidence of a butler named Alfred.",
+    "Garage contains no Batmobile, only a minivan."
+  ];
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  function isMaria(name){
+    return name.trim().toLowerCase().indexOf('maria') !== -1;
+  }
+
+  function runScan(rawName){
+    if (scanning) return;
+    var name = rawName.trim() || 'UNKNOWN SUBJECT';
+    scanning = true;
+    btn.disabled = true;
+    btn.textContent = 'Scanning…';
+    screen.innerHTML = '&gt; SCAN: ' + escapeHtml(name) + '\n';
+    screen.scrollTop = 0;
+
+    var lines = [
+      '&gt; Initializing cape-fit analysis...',
+      '&gt; Cross-referencing Wayne Enterprises HR records...',
+      '&gt; Measuring brooding-to-smile ratio...',
+      '&gt; Checking for unexplained disappearances...',
+      '&gt; Comparing silhouette to known Gotham rooftops...'
+    ];
+
+    var match = isMaria(name);
+
+    function appendLine(html, cls){
+      var span = cls ? '<span class="' + cls + '">' + html + '</span>' : html;
+      screen.innerHTML += span + '\n';
+      screen.scrollTop = screen.scrollHeight;
+    }
+
+    function finish(){
+      if (match){
+        appendLine('&gt; VERDICT: MATCH CONFIRMED &mdash; SUBJECT IS BATMAN', 'verdict-line match');
+        appendLine('(case re-closed. told you so.)', 'dim');
+        device.classList.add('alarm');
+        setTimeout(function(){ device.classList.remove('alarm'); }, reduced ? 0 : 2400);
+      } else {
+        appendLine('&gt; VERDICT: NOT BATMAN', 'verdict-line');
+        var note = flavors[Math.floor(Math.random() * flavors.length)];
+        appendLine('&gt; NOTE: ' + escapeHtml(note), 'dim');
+      }
+      scanning = false;
+      btn.disabled = false;
+      btn.textContent = 'Run scan';
+    }
+
+    if (reduced){
+      lines.forEach(function(l){ appendLine(l); });
+      finish();
+      return;
+    }
+
+    var i = 0;
+    (function step(){
+      if (i < lines.length){
+        appendLine(lines[i]);
+        i++;
+        setTimeout(step, 220);
+      } else {
+        setTimeout(finish, 260);
+      }
+    })();
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    runScan(input.value);
+  });
+})();
+</script>
+</body>
+</html>
